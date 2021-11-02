@@ -6,6 +6,10 @@ locals {
 resource "aws_vpc" "vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
+
+  tags = {
+    "created_by" = "terraform",
+  }
 }
 
 resource "aws_subnet" "subnet" {
@@ -14,7 +18,8 @@ resource "aws_subnet" "subnet" {
   availability_zone = local.availability_zone
 
   tags = {
-    Name = "aws-subnet"
+    "name" = "aws-subnet",
+    "created_by" = "terraform",
   }
 }
 
@@ -23,12 +28,21 @@ resource "aws_ebs_volume" "ebs_volume" {
 
   availability_zone = local.availability_zone
   size              = 20
-  type              = "gp2"
+  type              = "gp3"
+
+  tags = {
+    "purpose" = each.key,
+    "created_by" = "terraform",
+  }
 }
 
 resource "aws_key_pair" "key_pair" {
   key_name   = var.public_key["key_name"]
   public_key = var.public_key["public_key"]
+
+  tags = {
+    "created_by" = "terraform"
+  }
 }
 
 resource "aws_spot_instance_request" "spot_instance_request" {
@@ -58,6 +72,11 @@ resource "aws_spot_instance_request" "spot_instance_request" {
     capacity_reservation_preference = "open"
   }
 
+  tags = {
+    "purpose" = each.key,
+    "created_by" = "terraform",
+  }
+
 }
 
 resource "aws_volume_attachment" "volume_attachment" {
@@ -70,6 +89,10 @@ resource "aws_volume_attachment" "volume_attachment" {
 
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    "created_by" = "terraform"
+  }
 }
 
 resource "aws_route" "internet_access" {
@@ -82,6 +105,10 @@ resource "aws_route" "internet_access" {
 resource "aws_security_group" "security_group" {
   description = "Allow connection between NLB and target"
   vpc_id      = aws_vpc.vpc.id
+
+  tags = {
+    "created_by" = "terraform"
+  }
 }
 
 resource "aws_security_group_rule" "ingress_ssh" {
