@@ -19,6 +19,8 @@ resource "aws_subnet" "subnet" {
 }
 
 resource "aws_ebs_volume" "ebs_volume" {
+  for_each = var.ec2_instance_settings
+
   availability_zone = local.availability_zone
   size              = 20
   type              = "gp2"
@@ -58,11 +60,13 @@ resource "aws_spot_instance_request" "spot_instance_request" {
 
 }
 
-# resource "aws_volume_attachment" "volume_attachment" {
-#   device_name = "/dev/sdh"
-#   volume_id   = aws_ebs_volume.ebs_volume.id
-#   instance_id = aws_spot_instance_request.spot_instance_request.id
-# }
+resource "aws_volume_attachment" "volume_attachment" {
+  for_each = var.ec2_instance_settings
+
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.ebs_volume[each.key].id
+  instance_id = aws_spot_instance_request.spot_instance_request[each.key].spot_instance_id
+}
 
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
