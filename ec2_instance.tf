@@ -118,5 +118,5 @@ resource "aws_route53_record" "a_record" {
   name    = each.key
   type    = "A"
   ttl     = "300"
-  records = [aws_spot_instance_request.spot_instance_request[each.key].associate_public_ip_address]
+  records = [aws_spot_instance_request.spot_instance_request[each.key].public_ip]
 }
