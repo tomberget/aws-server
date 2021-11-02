@@ -45,7 +45,7 @@ resource "aws_spot_instance_request" "spot_instance_request" {
 
   # Spot settings
   spot_type                      = "persistent"
-  instance_interruption_behavior = "terminate"
+  instance_interruption_behavior = "stop"
   wait_for_fulfillment           = true
 
   credit_specification {
