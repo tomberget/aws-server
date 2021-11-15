@@ -24,7 +24,9 @@ resource "aws_subnet" "subnet" {
 }
 
 resource "aws_ebs_volume" "ebs_volume" {
-  for_each = var.ec2_instance_settings
+  for_each = {
+    for k, v in var.ec2_instance_settings : k => v if v.ebs_volume
+  }
 
   availability_zone = local.availability_zone
   size              = 20
@@ -80,7 +82,9 @@ resource "aws_spot_instance_request" "spot_instance_request" {
 }
 
 resource "aws_volume_attachment" "volume_attachment" {
-  for_each = var.ec2_instance_settings
+  for_each = {
+    for k, v in var.ec2_instance_settings : k => v if v.ebs_volume
+  }
 
   device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.ebs_volume[each.key].id

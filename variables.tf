@@ -39,6 +39,7 @@ variable "ec2_instance_settings" {
       "instance_type" = "t3.medium",
       "spot_price"    = "0.02",
       "hostnum"       = "100",
+      "ebs_volume"    = false,
     },
   }
 }
