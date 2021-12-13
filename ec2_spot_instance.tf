@@ -48,7 +48,10 @@ resource "aws_key_pair" "key_pair" {
 }
 
 resource "aws_spot_instance_request" "spot_instance_request" {
-  for_each = var.ec2_instance_settings
+  for_each = {
+    for k, v in var.ec2_instance_settings : k => v
+    if v.enabled
+  }
 
   # General settings
   ami                         = each.value.ami
@@ -83,7 +86,8 @@ resource "aws_spot_instance_request" "spot_instance_request" {
 
 resource "aws_volume_attachment" "volume_attachment" {
   for_each = {
-    for k, v in var.ec2_instance_settings : k => v if v.ebs_volume
+    for k, v in var.ec2_instance_settings : k => v
+    if v.enabled && v.ebs_volume
   }
 
   device_name = "/dev/sdh"
@@ -147,7 +151,10 @@ data "aws_route53_zone" "route53_zone" {
 }
 
 resource "aws_route53_record" "a_record" {
-  for_each = var.ec2_instance_settings
+  for_each = {
+    for k, v in var.ec2_instance_settings : k => v
+    if v.enabled
+  }
 
   zone_id = data.aws_route53_zone.route53_zone.zone_id
   name    = each.key

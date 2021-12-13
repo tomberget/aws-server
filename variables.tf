@@ -10,18 +10,6 @@ variable "availability_zone" {
   default     = "b"
 }
 
-variable "ami" {
-  description = "Default AMI to use"
-  type        = string
-  default     = "ami-0a8e758f5e873d1c1"
-}
-
-variable "instance_type" {
-  description = "Default instance type to use"
-  type        = string
-  default     = "t3.medium"
-}
-
 variable "public_key" {
   description = "Public key for connecting to AWS EC2 instance"
   type        = map(string)
@@ -35,6 +23,7 @@ variable "ec2_instance_settings" {
   type        = map(map(string))
   default = {
     "default" = {
+      "enabled"       = false,
       "ami"           = "ami-0a8e758f5e873d1c1",
       "instance_type" = "t3.medium",
       "spot_price"    = "0.02",
